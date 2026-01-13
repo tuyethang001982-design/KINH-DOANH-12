@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHÁM PHÁ LUẬT KINH DOANH - GD KT&PL 12</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #FF9a9e 0%, #Fad0c4 50%, #A18cd1 100%);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        .choice-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #f1f5f9;
+            background: white;
+        }
+        .choice-btn:hover:not(:disabled) {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #8b5cf6;
+            box-shadow: 0 15px 20px -5px rgba(139, 92, 246, 0.2);
+        }
+        .choice-btn.wrong-shake {
+            animation: shake 0.5s ease-in-out;
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .analysis-box {
+            border-left: 8px solid #6366f1;
+            background: #f8fafc;
+            border-radius: 1rem;
+        }
+        .theory-card {
+            background: linear-gradient(to bottom right, #fdf2f8, #eef2ff);
+            border: 1px dashed #c7d2fe;
+        }
+        .advisor-bubble {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            border-radius: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #6366f1, #d946ef, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .progress-fill {
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <div class="inline-block px-5 py-1.5 bg-white/60 rounded-full text-indigo-800 text-xs font-black tracking-widest uppercase mb-4 shadow-sm border border-white">
+                Bài 6: Quyền và nghĩa vụ của công dân trong kinh doanh
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
+                <span class="gradient-text uppercase">Khám Phá Luật Kinh Doanh</span>
+            </h1>
+        </header>
+
+        <div id="game-container" class="glass-card p-6 md:p-10 relative min-h-[500px] flex flex-col justify-center">
+            
+            <!-- Màn hình khởi đầu -->
+            <div id="start-screen" class="space-y-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-inner">🔊</div>
+                    <h2 class="text-3xl font-black text-slate-800 mb-4 uppercase">Sẵn sàng học tập</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white/50 p-4 rounded-2xl border border-white flex items-start gap-4">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Âm thanh sinh động</h4>
+                            <p class="text-sm text-slate-600">Phản hồi ngay lập tức qua âm thanh khi trả lời.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/50 p-4 rounded-2xl border border-white flex items-start gap-4">
+                        <span class="text-2xl">📝</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800">Ghi nhớ lý thuyết</h4>
+                            <p class="text-sm text-slate-600">Mỗi câu trả lời xong sẽ có phần tóm tắt SGK.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center pt-4">
+                    <button onclick="startGame()" class="bg-slate-900 text-white px-16 py-6 rounded-3xl font-black hover:bg-indigo-600 transition-all shadow-2xl uppercase tracking-widest text-lg transform hover:scale-105">
+                        Bắt đầu khám phá
+                    </button>
+                </div>
+            </div>
+
+            <!-- Màn hình chơi game -->
+            <div id="quiz-screen" class="hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between items-end mb-4">
+                        <span id="step-label" class="text-indigo-600 font-extrabold text-sm uppercase">Câu hỏi 01/10</span>
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400 font-black uppercase mb-1">Điểm kiến thức</div>
+                            <span id="score-display" class="text-3xl font-black text-pink-600">0</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-200/50 rounded-full h-3 shadow-inner">
+                        <div id="progress" class="progress-fill h-full rounded-full" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div id="quiz-content">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div id="q-icon" class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">💡</div>
+                        <p id="question-text" class="text-xl text-slate-800 font-bold leading-snug"></p>
+                    </div>
+
+                    <div id="advisor-section" class="mb-6">
+                        <button onclick="toggleAdvisor()" class="text-indigo-600 font-bold text-sm flex items-center gap-2 underline">
+                            👨‍⚖️ Xem gợi ý của cố vấn
+                        </button>
+                        <div id="advisor-bubble" class="hidden advisor-bubble mt-3 p-4 italic text-sm text-indigo-800"></div>
+                    </div>
+
+                    <div id="choices-container" class="grid grid-cols-1 gap-3"></div>
+                </div>
+
+                <!-- Bảng phân tích & Lý thuyết -->
+                <div id="analysis-container" class="hidden mt-8 space-y-6">
+                    <div class="analysis-box p-6 shadow-sm border border-slate-200">
+                        <h4 class="font-black text-slate-900 mb-3 flex items-center gap-2">
+                            <span id="result-badge" class="px-2 py-1 rounded text-xs text-white"></span>
+                            Giải thích chi tiết
+                        </h4>
+                        <div id="correct-analysis" class="text-slate-800 text-base font-medium mb-3"></div>
+                        <div id="wrong-analysis" class="text-slate-500 text-sm italic border-t pt-3 border-slate-100"></div>
+                    </div>
+
+                    <div class="theory-card p-6 rounded-2xl border-l-8 border-pink-400">
+                        <h4 class="text-pink-600 font-black uppercase text-xs tracking-widest mb-3 flex items-center gap-2">
+                            📌 Kiến thức cần ghi nhớ (Bài 6 SGK)
+                        </h4>
+                        <div id="theory-text" class="text-slate-700 text-sm leading-relaxed space-y-2"></div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button onclick="nextStep()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-indigo-600 transition-all flex items-center gap-2 uppercase tracking-widest text-sm shadow-lg">
+                            Tiếp tục học <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Định nghĩa âm thanh
+        const sounds = {
+            correct: new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'),
+            wrong: new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'),
+            finish: new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3'),
+            click: new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3')
+        };
+
+        function playSound(type) {
+            if (sounds[type]) {
+                sounds[type].currentTime = 0;
+                sounds[type].play().catch(e => console.log("Audio play blocked by browser"));
+            }
+        }
+
+        const gameData = [
+            {
+                icon: "⚖️",
+                question: "Công dân có thể tự do kinh doanh bất kỳ mặt hàng nào mình muốn hay không?",
+                advisor: "Hãy chú ý cụm từ 'đúng pháp luật' và các 'ngành nghề cấm'.",
+                choices: [
+                    { text: "Có, vì đó là quyền tự do tuyệt đối của công dân.", val: "A" },
+                    { text: "Được tự do kinh doanh nhưng phải theo quy định pháp luật.", val: "B" },
+                    { text: "Chỉ được kinh doanh nếu có sự cho phép của Nhà nước.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Chính xác! Quyền tự do kinh doanh luôn đi kèm với việc tuân thủ pháp luật.",
+                wrongText: "Phương án A sai vì quyền tự do không bao giờ là tuyệt đối (pháp luật cấm buôn ma túy). Phương án C sai vì công dân được chủ động kinh doanh những gì luật không cấm mà không cần chờ Nhà nước 'giao việc'.",
+                theory: [
+                    "<b>Quyền tự do kinh doanh:</b> Là quyền của mỗi công dân được tự mình lựa chọn hình thức tổ chức kinh tế, ngành nghề và quy mô kinh doanh.",
+                    "<b>Giới hạn:</b> Phải tuân theo quy định của pháp luật, không kinh doanh ngành nghề bị cấm."
+                ]
+            },
+            {
+                icon: "💰",
+                question: "Nghĩa vụ quan trọng nhất của doanh nghiệp đối với ngân sách nhà nước là gì?",
+                advisor: "Khoản đóng góp này dùng để xây trường học, bệnh viện...",
+                choices: [
+                    { text: "Đóng góp các quỹ từ thiện xã hội.", val: "A" },
+                    { text: "Thực hiện nghĩa vụ nộp thuế đầy đủ.", val: "B" },
+                    { text: "Hỗ trợ vốn cho các doanh nghiệp khác.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Đúng! Nộp thuế là nghĩa vụ pháp lý bắt buộc để duy trì bộ máy nhà nước.",
+                wrongText: "Phương án A là hoạt động tự nguyện, không phải nghĩa vụ pháp lý bắt buộc. Phương án C không phải là nghĩa vụ đối với ngân sách.",
+                theory: [
+                    "<b>Nghĩa vụ nộp thuế:</b> Là trách nhiệm của chủ thể kinh doanh phải nộp một khoản tiền vào ngân sách nhà nước.",
+                    "<b>Vai trò của thuế:</b> Là nguồn thu chính của ngân sách để chi tiêu cho công ích, y tế, giáo dục, an ninh."
+                ]
+            },
+            {
+                icon: "🏷️",
+                question: "Doanh nghiệp niêm yết giá một đằng nhưng bán một nẻo là vi phạm nghĩa vụ gì?",
+                advisor: "Thông tin cung cấp cho khách hàng phải 'thật'.",
+                choices: [
+                    { text: "Vi phạm nghĩa vụ cung cấp thông tin trung thực.", val: "A" },
+                    { text: "Vi phạm quyền tự chủ giá cả.", val: "B" },
+                    { text: "Vi phạm nghĩa vụ bảo vệ môi trường.", val: "C" }
+                ],
+                correct: "A",
+                correctText: "Chính xác! Cung cấp thông tin sai lệch là lừa dối người tiêu dùng.",
+                wrongText: "Phương án B sai vì quyền tự chủ giá phải đi kèm với việc công khai, minh bạch giá đó. Phương án C không liên quan đến tình huống.",
+                theory: [
+                    "<b>Nghĩa vụ với người tiêu dùng:</b> Phải đảm bảo chất lượng hàng hóa, dịch vụ theo tiêu chuẩn đã công bố.",
+                    "<b>Thông tin:</b> Phải cung cấp thông tin trung thực về sản phẩm (giá cả, hạn dùng, thành phần)."
+                ]
+            },
+            {
+                icon: "🌳",
+                question: "Doanh nghiệp sản xuất xả khói bụi mù mịt làm ảnh hưởng cư dân xung quanh là vi phạm gì?",
+                advisor: "Hãy nghĩ đến các tiêu chuẩn về môi trường sống.",
+                choices: [
+                    { text: "Vi phạm quyền sử dụng đất đai.", val: "A" },
+                    { text: "Vi phạm nghĩa vụ bảo vệ môi trường.", val: "B" },
+                    { text: "Vi phạm quyền quản lý lao động.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Đúng! Kinh doanh phải đảm bảo không làm hại đến môi trường xung quanh.",
+                wrongText: "Phương án A và C không trực tiếp giải quyết vấn đề ô nhiễm không khí trong tình huống này.",
+                theory: [
+                    "<b>Nghĩa vụ bảo vệ môi trường:</b> Các cơ sở kinh doanh phải có biện pháp xử lý chất thải, khí thải đạt tiêu chuẩn quy định.",
+                    "<b>Hậu quả:</b> Vi phạm có thể bị phạt tiền hoặc đình chỉ hoạt động kinh doanh."
+                ]
+            },
+            {
+                icon: "🏗️",
+                question: "Muốn mở một tiệm tạp hóa nhỏ tại nhà, bạn có cần đăng ký với chính quyền không?",
+                advisor: "Pháp luật yêu cầu mọi hoạt động kinh doanh đều phải được quản lý.",
+                choices: [
+                    { text: "Không cần, vì kinh doanh nhỏ không ai để ý.", val: "A" },
+                    { text: "Có, phải đăng ký kinh doanh theo đúng thủ tục.", val: "B" },
+                    { text: "Chỉ đăng ký nếu doanh thu trên 100 triệu.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Chính xác! Đăng ký kinh doanh là thủ tục bắt buộc để hoạt động hợp pháp.",
+                wrongText: "Phương án A là suy nghĩ sai lầm dẫn đến vi phạm hành chính. Phương án C sai vì ngưỡng doanh thu chỉ liên quan đến thuế, còn đăng ký hoạt động là bắt buộc từ đầu.",
+                theory: [
+                    "<b>Nghĩa vụ đăng ký kinh doanh:</b> Công dân phải đăng ký và kinh doanh đúng ngành, nghề đã đăng ký.",
+                    "<b>Giá trị pháp lý:</b> Giúp Nhà nước quản lý và bảo hộ quyền lợi hợp pháp của người kinh doanh."
+                ]
+            },
+            {
+                icon: "🤝",
+                question: "Quyền bình đẳng trong kinh doanh thể hiện rõ nhất ở điểm nào?",
+                advisor: "Mọi loại hình doanh nghiệp đều đứng chung một vạch xuất phát pháp lý.",
+                choices: [
+                    { text: "Doanh nghiệp nhà nước được ưu tiên hơn tư nhân.", val: "A" },
+                    { text: "Mọi doanh nghiệp đều bình đẳng về quyền và nghĩa vụ.", val: "B" },
+                    { text: "Người giàu có quyền kinh doanh nhiều hơn người nghèo.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Đúng! Pháp luật không phân biệt đối xử dựa trên hình thức sở hữu hay quy mô.",
+                wrongText: "Phương án A sai vì trong nền kinh tế thị trường, các thành phần kinh tế đều bình đẳng. Phương án C sai vì quyền là chung cho mọi công dân đủ điều kiện.",
+                theory: [
+                    "<b>Quyền bình đẳng:</b> Mọi chủ thể kinh doanh đều bình đẳng trong việc tiếp cận cơ hội, nguồn lực và thực hiện nghĩa vụ thuế.",
+                    "<b>Cạnh tranh:</b> Phải cạnh tranh lành mạnh, không dùng thủ đoạn phi pháp để triệt hạ đối thủ."
+                ]
+            },
+            {
+                icon: "🛂",
+                question: "Việc kinh doanh hàng giả, hàng nhái xâm phạm trực tiếp đến quyền gì?",
+                advisor: "Hàng giả gây thiệt hại cho cả người dùng và người làm hàng thật.",
+                choices: [
+                    { text: "Quyền sở hữu trí tuệ và quyền lợi người tiêu dùng.", val: "A" },
+                    { text: "Quyền tự do đi lại của công dân.", val: "B" },
+                    { text: "Quyền được bảo vệ danh dự cá nhân.", val: "C" }
+                ],
+                correct: "A",
+                correctText: "Chính xác! Hàng giả phá hoại uy tín thương hiệu và sức khỏe người dùng.",
+                wrongText: "Phương án B và C không liên quan đến lĩnh vực kinh tế và hàng hóa giả mạo.",
+                theory: [
+                    "<b>Đạo đức kinh doanh:</b> Là tập hợp các nguyên tắc, chuẩn mực đạo đức điều chỉnh hành vi của chủ thể kinh doanh.",
+                    "<b>Yêu cầu:</b> Không buôn lậu, không làm hàng giả, không quảng cáo sai sự thật."
+                ]
+            },
+            {
+                icon: "📝",
+                question: "Loại thuế nào sau đây đánh trực tiếp vào thu nhập của người kinh doanh?",
+                advisor: "Tên gọi của loại thuế này nói lên đối tượng mà nó nhắm đến.",
+                choices: [
+                    { text: "Thuế Giá trị gia tăng (VAT).", val: "A" },
+                    { text: "Thuế Thu nhập cá nhân/doanh nghiệp.", val: "B" },
+                    { text: "Thuế Tiêu thụ đặc biệt.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Đúng! Thuế trực thu đánh thẳng vào túi tiền của người kiếm ra thu nhập.",
+                wrongText: "Phương án A và C là thuế gián thu, người tiêu dùng mới là người thực sự trả khoản thuế này thông qua giá bán.",
+                theory: [
+                    "<b>Thuế trực thu:</b> Đánh trực tiếp vào thu nhập hoặc tài sản của người nộp thuế.",
+                    "<b>Thuế gián thu:</b> Thuế cộng vào giá bán, người tiêu dùng chịu thuế còn người bán chỉ nộp hộ."
+                ]
+            },
+            {
+                icon: "🛡️",
+                question: "Nghĩa vụ bảo đảm an toàn lao động cho nhân viên thuộc về ai?",
+                advisor: "Người thuê lao động phải chịu trách nhiệm về môi trường làm việc.",
+                choices: [
+                    { text: "Chủ doanh nghiệp.", val: "A" },
+                    { text: "Người lao động tự lo.", val: "B" },
+                    { text: "Chính quyền địa phương.", val: "C" }
+                ],
+                correct: "A",
+                correctText: "Chính xác! Đây là nghĩa vụ cơ bản của người sử dụng lao động trong Luật Lao động.",
+                wrongText: "Phương án B sai vì chủ doanh nghiệp phải có trách nhiệm cung cấp trang thiết bị bảo hộ. Phương án C chỉ đóng vai trò giám sát, kiểm tra.",
+                theory: [
+                    "<b>Nghĩa vụ với người lao động:</b> Doanh nghiệp phải ký hợp đồng lao động, đóng bảo hiểm và đảm bảo an toàn vệ sinh lao động.",
+                    "<b>Quyền lợi:</b> Người lao động có quyền được hưởng lương tương xứng và làm việc trong môi trường an toàn."
+                ]
+            },
+            {
+                icon: "📉",
+                question: "Hành vi trốn thuế của một doanh nghiệp gây thiệt hại lớn nhất cho ai?",
+                advisor: "Ngân sách hụt đi đồng nghĩa với việc các phúc lợi xã hội bị giảm sút.",
+                choices: [
+                    { text: "Cho chính chủ doanh nghiệp đó.", val: "A" },
+                    { text: "Cho Nhà nước và toàn xã hội.", val: "B" },
+                    { text: "Cho các doanh nghiệp đối thủ.", val: "C" }
+                ],
+                correct: "B",
+                correctText: "Đúng! Trốn thuế làm mất đi nguồn lực để phát triển đất nước.",
+                wrongText: "Phương án A sai vì trước mắt họ có vẻ lợi nhưng lâu dài sẽ bị phạt nặng. Phương án C chỉ bị ảnh hưởng gián tiếp do cạnh tranh không công bằng.",
+                theory: [
+                    "<b>Ý thức pháp luật:</b> Tuân thủ nghĩa vụ thuế thể hiện trách nhiệm công dân và đạo đức của người kinh doanh.",
+                    "<b>Kết luận:</b> Kinh doanh có đạo đức và đúng luật là con đường phát triển bền vững nhất."
+                ]
+            }
+        ];
+
+        let currentStep = 0;
+        let score = 0;
+
+        function startGame() {
+            playSound('click');
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            renderStep();
+        }
+
+        function toggleAdvisor() {
+            playSound('click');
+            const bubble = document.getElementById('advisor-bubble');
+            bubble.innerText = gameData[currentStep].advisor;
+            bubble.classList.toggle('hidden');
+        }
+
+        function renderStep() {
+            const data = gameData[currentStep];
+            if (!data) {
+                showFinal();
+                return;
+            }
+
+            document.getElementById('analysis-container').classList.add('hidden');
+            document.getElementById('advisor-bubble').classList.add('hidden');
+            document.getElementById('step-label').innerText = `Câu hỏi 0${currentStep + 1}/10`;
+            document.getElementById('question-text').innerText = data.question;
+            document.getElementById('q-icon').innerText = data.icon;
+            document.getElementById('progress').style.width = ((currentStep + 1) / 10 * 100) + '%';
+            
+            const container = document.getElementById('choices-container');
+            container.innerHTML = '';
+
+            data.choices.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = "choice-btn w-full text-left p-4 rounded-2xl font-bold text-slate-700 flex items-center shadow-sm";
+                btn.innerHTML = `<span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mr-4 font-black">${c.val}</span> ${c.text}`;
+                btn.onclick = () => handleChoice(c.val, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleChoice(val, btn) {
+            const data = gameData[currentStep];
+            const isCorrect = val === data.correct;
+            const buttons = document.querySelectorAll('.choice-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                playSound('correct'); // Phát âm thanh đúng
+                score += 10;
+                btn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-700');
+                document.getElementById('result-badge').innerText = "Chính xác";
+                document.getElementById('result-badge').className = "px-2 py-1 rounded text-xs text-white bg-emerald-500";
+            } else {
+                playSound('wrong'); // Phát âm thanh sai
+                btn.classList.add('wrong-shake', 'text-rose-700');
+                document.getElementById('result-badge').innerText = "Chưa đúng";
+                document.getElementById('result-badge').className = "px-2 py-1 rounded text-xs text-white bg-rose-500";
+                buttons.forEach(b => {
+                    if (b.innerText.includes(data.correct)) b.classList.add('border-emerald-500', 'bg-emerald-50');
+                });
+            }
+
+            document.getElementById('score-display').innerText = score;
+            showAnalysis(data);
+        }
+
+        function showAnalysis(data) {
+            document.getElementById('correct-analysis').innerText = data.correctText;
+            document.getElementById('wrong-analysis').innerHTML = `<b>Tại sao các câu khác sai?</b><br>${data.wrongText}`;
+            
+            const theoryContainer = document.getElementById('theory-text');
+            theoryContainer.innerHTML = '';
+            data.theory.forEach(t => {
+                const p = document.createElement('p');
+                p.innerHTML = `• ${t}`;
+                theoryContainer.appendChild(p);
+            });
+
+            document.getElementById('analysis-container').classList.remove('hidden');
+        }
+
+        function nextStep() {
+            playSound('click');
+            currentStep++;
+            renderStep();
+        }
+
+        function showFinal() {
+            playSound('finish'); // Phát âm thanh hoàn thành
+            const container = document.getElementById('game-container');
+            container.innerHTML = `
+                <div class="text-center py-10">
+                    <div class="text-6xl mb-6">🎓</div>
+                    <h2 class="text-3xl font-black mb-2">HOÀN THÀNH KHÓA HỌC!</h2>
+                    <p class="text-slate-500 mb-8 font-medium">Bạn đã nắm vững quyền và nghĩa vụ kinh doanh.</p>
+                    <div class="bg-indigo-50 rounded-3xl p-8 mb-8 inline-block">
+                        <div class="text-xs font-black text-indigo-300 uppercase mb-1">Tổng điểm uy tín</div>
+                        <div class="text-6xl font-black text-indigo-600">${score}/100</div>
+                    </div>
+                    <br>
+                    <button onclick="location.reload()" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm">Học lại từ đầu</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
